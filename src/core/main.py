@@ -36,14 +36,22 @@ def OCRMain(FirstFile, SecondFile, Background):
     lol = [[]]
     i = 0
     h = 0
-    for item in contours:
-        if(i < len(contoursTwo)):
-            if(item not in contoursTwo[i]):
-                results.append(item)
-                # lol[0].append(hierarchyTwo[0][i])
+    
+    for item in contoursTwo:
+        if(i < len(contours)):
+            if(item not in contours[i]):
+                if (len(results) != 0 and item not in results[len(results)-1]):
+                    results.append(item)
+                if (len(results) == 0):
+                    results.append(item)
+                #lol[0].append(hierarchyTwo[0][i])
+        if (i >= len(contours)):
+            results.append(item)
+            lol[0].append(hierarchyTwo[0][i])
         i = i+1
+    print(len(results))
     for items in results: 
-        lol[0].append(hierarchy[0][h])
+        lol[0].append(hierarchyTwo[0][h])
         h = h+1
     #lol[0][0] = [1, -1, -1, -1]
     #resultsh = []
