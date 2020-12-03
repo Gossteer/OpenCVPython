@@ -30,29 +30,30 @@ def OCRMain(FirstFile, SecondFile, Background):
     contoursTwo, hierarchyTwo = cv.findContours(threshtTwo.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
 
     
-    print(len(contours), len(hierarchy[0]))
-    print(len(contoursTwo), len(hierarchyTwo[0]) , hierarchyTwo[0] == hierarchy[0])
-    results = []
-    lol = [[]]
-    i = 0
-    h = 0
+    # print(len(contours), len(hierarchy[0]))
+    # print(len(contoursTwo), len(hierarchyTwo[0]) , hierarchyTwo[0] == hierarchy[0])
+    # results = []
+    # lol = [[]]
+    # i = 0
+    # h = 0
     
-    for item in contoursTwo:
-        if(i < len(contours)):
-            if(item not in contours[i]):
-                if (len(results) != 0 and item not in results[len(results)-1]):
-                    results.append(item)
-                if (len(results) == 0):
-                    results.append(item)
+    # for item in contoursTwo:
+    #     if(i < len(contours)):
+    #         if(item not in contours[i]):
+    #             if (len(results) != 0 and item not in results[len(results)-1]):
+    #                 results.append(item)
+    #             if (len(results) == 0):
+    #                 results.append(item)
                 #lol[0].append(hierarchyTwo[0][i])
-        if (i >= len(contours)):
-            results.append(item)
-            lol[0].append(hierarchyTwo[0][i])
-        i = i+1
-    print(len(results))
-    for items in results: 
-        lol[0].append(hierarchyTwo[0][h])
-        h = h+1
+        # if (i >= len(contours)):
+        #     results.append(item)
+            # lol[0].append(hierarchyTwo[0][i])
+        # i = i+1
+    # print(len(results))
+    # # for items in results:
+    # while h < len(results):
+    #     lol[0].append(hierarchyTwo[0][h])
+    #     h = h+1 
     #lol[0][0] = [1, -1, -1, -1]
     #resultsh = []
     #j = 0
@@ -61,18 +62,21 @@ def OCRMain(FirstFile, SecondFile, Background):
     #         if(items in hierarchy[0][j]):
     #             resultsh.append(items)
     #     j = j+1
-    print(len(results), len(lol[0]), len(np.array(lol[0])))
-    print(lol[0][0], hierarchyTwo[0][0] , np.array(lol[0][0]))
-    cv.drawContours( resizedBack, results, -1, (0,0,255), 1, cv.LINE_AA, np.array(lol), 1 )
+    # print(contours[0])
+    # print(len(results), len(lol[0]), len(np.array(lol[0])))
+    # print(results[0])
+    # print(lol[0][0], hierarchyTwo[0][0] , np.array(lol[0][0]))
+    # print(hierarchyTwo[0])
+    # cv.drawContours( resizedBack, results, -1, (0,0,255), 1, cv.LINE_AA, np.array(lol), 1 )
     #res = [x != y for i,x in enumerate(contours) for j,y in enumerate(contoursTwo) if i != j] 
     #res1 = np.array(res)
     #print(res1)
     #print(np.isin(contours[0],contoursTwo))
     #print(contoursTwo)
-    #cv.drawContours( resizedBack, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
-    # cv.drawContours( resizedBack, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
-    # cv.drawContours( resizedBack, contours, -1, (0,255,0), 1, cv.LINE_AA, hierarchy, 1 )
-    # cv.drawContours( resizedBack, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
+    cv.drawContours( resizedBack, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
+    cv.drawContours( resizedBack, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
+    cv.drawContours( resizedBack, contours, -1, (0,255,0), 1, cv.LINE_AA, hierarchy, 1 )
+    cv.drawContours( resizedBack, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
    
     
     # if(len(contours) > len(contoursTwo)):
