@@ -68,7 +68,7 @@ def OCRMain(FirstFile, SecondFile, Background):
     # print(lol[0][0], hierarchyTwo[0][0] , np.array(lol[0][0]))
     # print(hierarchyTwo[0])
     # cv.drawContours( resizedBack, results, -1, (0,0,255), 1, cv.LINE_AA, np.array(lol), 1 )
-    #res = [x != y for i,x in enumerate(contours) for j,y in enumerate(contoursTwo) if i != j] 
+    # res = [x != y for i,x in enumerate(contours) for j,y in enumerate(contoursTwo) if i != j] 
     #res1 = np.array(res)
     #print(res1)
     #print(np.isin(contours[0],contoursTwo))
@@ -135,7 +135,7 @@ def ExtractPDF(File):
     
     
 fileOne = "./images/Test/5.png"
-fileTwo = "./images/Test/6.png"    
+fileTwo = "./images/Test/7.png"    
 bkgrnd = "./images/Test/3.jpg"    
 OCRMain(fileOne,fileTwo,bkgrnd)
 

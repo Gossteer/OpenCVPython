@@ -1,51 +1,41 @@
 'https://imagemagick.org/script/develop.php#python'
 'https://www.raymond.cc/blog/how-to-compare-the-difference-between-two-identical-looking-images/'
 
-# from wand.image import Image
-
-# img1 = Image(filename="./images/Test/5.png")
-# img2 = Image(filename="./images/Test/6.png")
-
-# # Normalize the two images in order to avoid exposition-related issues
-# img1.normalize()
-# img2.normalize()
-
-# # Create a 64 x 64 thumbnail for every image
-# img1.resize(64, 64)
-# img2.resize(64, 64)
-
-# # Compare the two images using root mean square metric
-# comparison = img2.compare(img1, metric='root_mean_square')
-# comparison.save(filename='./images/Test/buf.png')
-
 import matplotlib.pyplot as plt
 from wand.image import Image
 from wand.display import display
 import pdf2image as pdf
+import numpy as np
 
 def render(FirstFile, SecondFile):
     with Image(filename=FirstFile) as base:
         with Image(filename=SecondFile) as img:
             base.fuzz = base.quantum_range * 0.20  # Threshold of 20%
-            result_image, result_metric = base.compare(img)
+            result_image, result_metric = base.compare(img, metric='normalized_cross_correlation')
             # result_image.save(filename='./images/Test/buf.png')
-            plt.figure('Итог сравнения')
-            plt.imshow(result_image)
-            plt.show()
-#             Image(filename='./images/Test/1_page.jpg')
-#             with display as :
-#                 pass
-#             display(result_image, server_name=':0')
-            
-#             with result_image:
-#                 display(result_image)
-#                 print('lol')
-#                 result_image.save(filename='./images/Test/buf.png')
+            showcompare(result_image, FirstFile, SecondFile, result_metric)
 
-# with Image(filename='./images/Test/buf.png') as img:
-#     img.frame(width=10, height=10)
-#     img.save(filename='lena_frame.jpg')
-#     display(img)
+def showcompare(result_image, FirstFile, SecondFile, result_metric):
+    fig, ax = plt.subplots()
+    ax.plot('o-', color='gray', label='Одинаково')
+    ax.plot('o-', color='red' , label='Разница')
+    ax.legend()
+    ax.set_title('Название файлов сравнения')
+    ax.set_title('% разницы')
+    ax.imshow(result_image)
+    data_1 = int(round(result_metric, 2) * 100)
+    data_2 = 100 - int(round(result_metric, 2) * 100)
+    ax.bar(1, data_1, color='gray')
+    ax.bar(1, data_2, color='red', bottom = data_1)
+    fig.set_figwidth(12)    #  ширина Figure
+    fig.set_figheight(6)  
+    plt.show()
+
+# def persentcompare(persent):
+#     """
+#     docstring
+#     """
+#     return x + y
 
 def similarity(FirstFile, SecondFile):
     dissimilarity_threshold = 0.0
@@ -68,8 +58,24 @@ def ExtractPDF(File):
     images[0].save("./image_buf/buf.png","png")
     return "./image_buf/buf.png"
 
+  
+# fileOne = "./images/Test/donut1.jpg"
+# fileTwo = "./images/Test/donut.jpg"
+ 
+# render(fileOne,fileTwo)
+
 fileOne = "./images/Test/5.png"
-fileTwo = "./images/Test/7.png"    
-# bkgrnd = "./images/Test/3.jpg" 
-similarity(fileOne,fileTwo)   
+fileTwo = "./images/Test/8.png"
+
 render(fileOne,fileTwo)
+
+
+# fileOne = "./images/Test/donut.jpg"
+# fileTwo = "./images/Test/donut.jpg"
+
+# render(fileOne,fileTwo)
+
+# fileOne = "./images/Test/1.png"
+# fileTwo = "./images/Test/2.png"
+
+# render(fileOne,fileTwo)
