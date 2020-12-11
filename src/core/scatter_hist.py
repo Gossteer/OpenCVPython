@@ -2,6 +2,9 @@ from tkinter import *
 from array import *
 import numpy as np
 import os
+import cv2 as cv
+import difflib
+import PIL
 import matplotlib.pyplot as plt
 from wand.image import Image
 from wand.display import display
@@ -12,12 +15,55 @@ from tkinter import filedialog
 
 files = []
 
-left, width = 0.1, 0.65
-bottom, height = 0.1, 0.65
-spacing = 0.001
+left, width = 0.02, 0.75
+bottom, height = 0.13, 0.75
+spacing = 0.05
 
-rect_scatter = [left - 0.03, bottom, width, height]
-rect_histy = [left + width + spacing, bottom, 0.2, height]
+rect_scatter = [left, bottom, width, height]
+rect_histy = [left + width - spacing, bottom, 0.2, height]
+
+result_image_gloval = 0
+result_metric_global = 1
+
+def OCRRender(FirstFile, SecondFile):
+    #Colors parameters
+    global result_image_gloval
+    hsv_min = np.array((217, 217, 217), np.uint8)
+    hsv_max = np.array((0, 0, 0), np.uint8)
+    #Read files to cv
+    image = cv.imread(FirstFile)
+    imagetwo = cv.imread(SecondFile)
+    result = cv.imread("./images/Test/3.jpg")
+    #Resizing images 
+    resizedFirst = cv.resize(image, (3307,2339), interpolation = cv.INTER_AREA)
+    resizedTwo = cv.resize(imagetwo, (3307,2339), interpolation = cv.INTER_AREA)
+    result_image_gloval = cv.resize(result, (3307,2339), interpolation = cv.INTER_AREA) #Уменьшим картинку
+    #hsv parameters 1
+    hsv = cv.cvtColor(resizedFirst, cv.COLOR_BGR2HSV ) # меняем цветовую модель с BGR на HSV 
+    thresh = cv.inRange(hsv,hsv_max , hsv_min ) # применяем цветовой фильтр
+    contours, hierarchy = cv.findContours(thresh.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
+    #hsv parameters 2
+    hsvTwo = cv.cvtColor( resizedTwo, cv.COLOR_BGR2HSV ) # меняем цветовую модель с BGR на HSV 
+    threshtTwo = cv.inRange( hsvTwo,hsv_max , hsv_min ) # применяем цветовой фильтр
+    contoursTwo, hierarchyTwo = cv.findContours(threshtTwo.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
+
+    cv.drawContours( result_image_gloval, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
+    cv.drawContours( result_image_gloval, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
+    cv.drawContours( result_image_gloval, contours, -1, (0,255,0), 1, cv.LINE_AA, hierarchy, 1 )
+    cv.drawContours( result_image_gloval, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
+   
+    
+    if(len(contours) > len(contoursTwo)):
+        cv.drawContours( result_image_gloval, contours, -1, (0,0,255), 1, cv.LINE_AA, hierarchy, 1 )
+        cv.drawContours( result_image_gloval, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
+    else:
+        cv.drawContours( result_image_gloval, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
+        cv.drawContours( result_image_gloval, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
+        
+    # #Window
+    # cv.imshow('OCR results',resizedBack)
+    # cv.waitKey()
+    # cv.destroyAllWindows()
 
 def get_path():
     root = Tk()
@@ -33,25 +79,33 @@ def get_path():
             # Если всё же сохранять, то не забывать, что может быть два pdf файла 
         else:
             files.append(pathName.name)
-    render(files[0], files[1])
-    os.remove('./image_buf/buf.png')
+   
+    show(files[0], files[1])
+    # os.remove('./image_buf/buf.png')
 
-def render(FirstFile, SecondFile):
-    fig = plt.figure(num='Результат сравнения', figsize=(12, 8))
+def show(FirstFile, SecondFile):
+    fig = plt.figure(num='Результат сравнения', figsize=(16, 9))
     ax = fig.add_axes(rect_scatter)
     ax_histy = fig.add_axes(rect_histy)
     ax_histy.tick_params(axis="x", labelbottom=False)
 
-    with Image(filename=FirstFile) as base:
-        with Image(filename=SecondFile) as img:
-            base.fuzz = base.quantum_range * 0.20  # Threshold of 20%
-            result_image, result_metric = base.compare(img, metric='normalized_cross_correlation')
-            # result_image.save(filename='./images/Test/buf.png')
-    addcomare(ax, result_image)
+    # OCRRender(FirstFile, SecondFile)
+    wondRender(FirstFile, SecondFile)
+    addcomare(ax, result_image_gloval)
     addlegeng(ax)
-    addbar(ax_histy, result_metric)
-
+    addbar(ax_histy, result_metric_global)
     plt.show()
+
+def wondRender(FirstFile, SecondFile):
+    global result_image_gloval
+    global result_metric_global
+    with Image(filename=FirstFile) as base:
+            with Image(filename=SecondFile) as img:
+                base.fuzz = base.quantum_range * 0.20  # Threshold of 20%
+                result_image, result_metric = base.compare(img, metric='normalized_cross_correlation')
+                # result_image.save(filename='./images/Test/buf.png')
+    result_image_gloval = result_image
+    result_metric_global = result_metric
 
 def addcomare(ax, result_image):
     ax.imshow(result_image)

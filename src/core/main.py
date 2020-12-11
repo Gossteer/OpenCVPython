@@ -29,7 +29,6 @@ def OCRMain(FirstFile, SecondFile, Background):
     threshtTwo = cv.inRange( hsvTwo,hsv_max , hsv_min ) # применяем цветовой фильтр
     contoursTwo, hierarchyTwo = cv.findContours(threshtTwo.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
 
-    
     # print(len(contours), len(hierarchy[0]))
     # print(len(contoursTwo), len(hierarchyTwo[0]) , hierarchyTwo[0] == hierarchy[0])
     # results = []
@@ -55,7 +54,7 @@ def OCRMain(FirstFile, SecondFile, Background):
     #     lol[0].append(hierarchyTwo[0][h])
     #     h = h+1 
     #lol[0][0] = [1, -1, -1, -1]
-    #resultsh = []
+    #resultsh = []                                                                                                                                                   
     #j = 0
     # for items in hierarchyTwo:
     #     if(j < len(hierarchy)):
@@ -73,18 +72,19 @@ def OCRMain(FirstFile, SecondFile, Background):
     #print(res1)
     #print(np.isin(contours[0],contoursTwo))
     #print(contoursTwo)
+    
     cv.drawContours( resizedBack, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
     cv.drawContours( resizedBack, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
     cv.drawContours( resizedBack, contours, -1, (0,255,0), 1, cv.LINE_AA, hierarchy, 1 )
     cv.drawContours( resizedBack, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
    
     
-    # if(len(contours) > len(contoursTwo)):
-    #     cv.drawContours( resizedBack, contours, -1, (0,0,255), 1, cv.LINE_AA, hierarchy, 1 )
-    #     cv.drawContours( resizedBack, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
-    # else:
-    #     cv.drawContours( resizedBack, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
-    #     cv.drawContours( resizedBack, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
+    if(len(contours) > len(contoursTwo)):
+        cv.drawContours( resizedBack, contours, -1, (0,0,255), 1, cv.LINE_AA, hierarchy, 1 )
+        cv.drawContours( resizedBack, contoursTwo, -1, (0,0,0), 1, cv.LINE_AA, hierarchyTwo, 1 )
+    else:
+        cv.drawContours( resizedBack, contoursTwo, -1, (0,0,255), 1, cv.LINE_AA, hierarchyTwo, 1 )
+        cv.drawContours( resizedBack, contours, -1, (0,0,0), 1, cv.LINE_AA, hierarchy, 1 )
         
     #Window
     cv.imshow('OCR results',resizedBack)
